@@ -86,8 +86,11 @@ class Graph {
   }
 
   train(iteration=1, verbose=false){
-    while(iteration-- > 0)
+    var total = iteration;
+    while(iteration-- > 0) {
+      console.log("Training, please wait...", Math.round(iteration / total) + "%");
       this._train(iteration, verbose);
+    }
   }
 
   _train(iteration, verbose){

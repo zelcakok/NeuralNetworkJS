@@ -16,7 +16,8 @@ function revert(converted, expected, output, threshold){
     expected: converted[expected],
     actual: output,
     error: error,
-    isAccepted: error <= threshold
+    threshold: threshold,
+    isAccepted: error <= threshold,
   }
   console.log(JSON.stringify(result, null, ' '));
 }
@@ -36,7 +37,7 @@ function trainData(converted, inputSize, outputSize){
   return train;
 }
 
-async function train(trainData, testCases=null, converted=null){
+function train(trainData, testCases=null, converted=null){
   var graph = new Graph(), classifier, testResult;
   graph.dataSet(trainData, 500)
   graph.train(100, true);
@@ -52,13 +53,17 @@ async function train(trainData, testCases=null, converted=null){
   }
 }
 
-async function classify(classifier){
-  var converted = convert(classifier);
+async function classify(testCases, classifiers){
+  var converted = convert(classifiers);
+  console.log("Classifiers");
+  console.log(converted);
+  console.log();
   var graph = Graph.restore(await Zetabase.restore());
-  Object.keys(converted).map((classifier)=>{
-    testResult = graph.test({input: [converted[classifier]]});
-    revert(converted, classifier, testResult.read(0,0), 0.1);
-  })
+  for(var i=0; i<testCases.length; i++){
+    var testCase = testCases[i];
+    testResult = graph.test({input: testCase.input})
+    revert(converted, testCase.answer, testResult.read(0,0), testCase.threshold);
+  }
 }
 
 console.clear();
@@ -75,11 +80,10 @@ var trainData = {
     ]
 }
 var testData = [
-  {input: [-0,-40,-30,-50], answer:"A", threshold: 0.2},
-  {input: [-40,-0,-50,-30], answer:"B", threshold: 0.2},
-  {input: [-30,-50,-0,-40], answer:"C", threshold: 0.2},
-  {input: [-50,-30,-40,-0], answer:"D", threshold: 0.2}
+  {input: [-5,-38,-33,-57], answer:"A", threshold: 0.2},
+  {input: [-40,-6,-50,-35], answer:"B", threshold: 0.2},
+  {input: [-18,-45,-1,-42], answer:"C", threshold: 0.2},
+  {input: [-53,-26,-36,-9], answer:"D", threshold: 0.2}
 ]
-train(trainData, testData, converted);
-
-// classify(["1","2","3","4","5"]);
+// train(trainData, testData, converted);
+classify(testData, classifier);
