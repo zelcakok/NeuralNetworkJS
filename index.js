@@ -36,28 +36,20 @@ function trainData(converted, inputSize, outputSize){
   return train;
 }
 
-async function train(trainData, converted=null){
+async function train(trainData, testCases=null, converted=null){
   var graph = new Graph(), classifier, testResult;
-  graph.dataSet(trainData, 100)
-  graph.train(100, false);
+  graph.dataSet(trainData, 500)
+  graph.train(100, true);
+  Zetabase.save(graph);
+  if(!testCases) return;
+  console.log("Classifiers");
   console.log(converted);
-  testResult = graph.test({input: [-0,-40,-30,-50]})
-  revert(converted, "A", testResult.read(0,0), 0.5);
-
-  // testResult = graph.test({input: [-40,-0,-50,-30]})
-  // revert(converted, "B", testResult.read(0,0), 0.1);
-  //
-  // testResult = graph.test({input: [-30,-50,-0,-40]})
-  // revert(converted, "C", testResult.read(0,0), 0.1);
-  //
-  // testResult = graph.test({input: [-50,-30,-40,-0]})
-  // revert(converted, "D", testResult.read(0,0), 0.1);
-
-  // Zetabase.save(graph);
-  // Object.keys(converted).map((classifier)=>{
-  //   testResult = graph.test({input: [converted[classifier]]});
-  //   revert(converted, classifier, testResult.read(0,0), 0.1);
-  // })
+  console.log();
+  for(var i=0; i<testCases.length; i++){
+    var testCase = testCases[i];
+    testResult = graph.test({input: testCase.input})
+    revert(converted, testCase.answer, testResult.read(0,0), testCase.threshold);
+  }
 }
 
 async function classify(classifier){
@@ -82,6 +74,12 @@ var trainData = {
       {input: [-50,-30,-40,-0], answer:converted["D"]}
     ]
 }
-train(trainData, converted);
+var testData = [
+  {input: [-0,-40,-30,-50], answer:"A", threshold: 0.2},
+  {input: [-40,-0,-50,-30], answer:"B", threshold: 0.2},
+  {input: [-30,-50,-0,-40], answer:"C", threshold: 0.2},
+  {input: [-50,-30,-40,-0], answer:"D", threshold: 0.2}
+]
+train(trainData, testData, converted);
 
 // classify(["1","2","3","4","5"]);
