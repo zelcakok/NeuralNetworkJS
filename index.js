@@ -41,7 +41,7 @@ async function train(trainData, converted=null){
   graph.dataSet(trainData, 100)
   graph.train(100, false);
   console.log(converted);
-  testResult = graph.test({input: [-15,-Math.sqrt(15*15 + 40*40),-15,-Math.sqrt(15*15 + 40*40)]})
+  testResult = graph.test({input: [-0,-40,-30,-50]})
   revert(converted, "A", testResult.read(0,0), 0.5);
 
   // testResult = graph.test({input: [-40,-0,-50,-30]})
