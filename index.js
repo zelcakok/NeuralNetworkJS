@@ -87,5 +87,7 @@ var testData = [
   {input: [-18,-45,-1,-42], answer:"C", threshold: 0.25},
   {input: [-53,-26,-36,-9], answer:"D", threshold: 0.25}
 ]
-train(trainData, testData, converted);
-classify(testData, classifier);
+
+var nn = new NeuralNetwork(trainData, testData);
+nn.train(testData, converted);
+// nn.classify(testData, classifier);

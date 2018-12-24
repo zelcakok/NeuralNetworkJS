@@ -1,10 +1,12 @@
+const Zetabase = require("./Zetabase");
+const Graph = require("./Graph");
 class NeuralNetwork {
   constructor(trainData, testData) {
     this.trainData = trainData;
     this.testData = testData;
   }
 
-  convert(inputs){
+  static convert(inputs){
     var output = [];
     for(var i=0; i<inputs.length; i++)
       output[inputs[i]] = i / (inputs.length - 1);
@@ -39,10 +41,10 @@ class NeuralNetwork {
     return train;
   }
 
-  async train(trainData, testCases=null, converted=null, verbose=false){
+  async train(testCases=null, converted=null, verbose=false){
     var graph = Graph.restore(await Zetabase.restore());
     var classifier, testResult;
-    graph.dataSet(trainData, 500)
+    graph.dataSet(this.trainData, 500)
     graph.train(100, verbose);
     Zetabase.save(graph);
     if(!testCases) return;
@@ -52,20 +54,20 @@ class NeuralNetwork {
     for(var i=0; i<testCases.length; i++){
       var testCase = testCases[i];
       testResult = graph.test({input: testCase.input})
-      revert(converted, testCase.answer, testResult.read(0,0), testCase.threshold);
+      this.revert(converted, testCase.answer, testResult.read(0,0), testCase.threshold);
     }
   }
 
   async classify(testCases, classifiers){
-    var converted = convert(classifiers);
+    var converted = NeuralNetwork.convert(classifiers);
     console.log("Classifiers");
     console.log(converted);
     console.log();
     var graph = Graph.restore(await Zetabase.restore());
     for(var i=0; i<testCases.length; i++){
       var testCase = testCases[i];
-      testResult = graph.test({input: testCase.input})
-      revert(converted, testCase.answer, testResult.read(0,0), testCase.threshold);
+      var testResult = graph.test({input: testCase.input})
+      this.revert(converted, testCase.answer, testResult.read(0,0), testCase.threshold);
     }
   }
 }
