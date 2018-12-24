@@ -37,10 +37,11 @@ function trainData(converted, inputSize, outputSize){
   return train;
 }
 
-function train(trainData, testCases=null, converted=null){
-  var graph = new Graph(), classifier, testResult;
+async function train(trainData, testCases=null, converted=null, verbose=false){
+  var graph = Graph.restore(await Zetabase.restore());
+  var classifier, testResult;
   graph.dataSet(trainData, 500)
-  graph.train(100, true);
+  graph.train(100, verbose);
   Zetabase.save(graph);
   if(!testCases) return;
   console.log("Classifiers");
@@ -80,10 +81,10 @@ var trainData = {
     ]
 }
 var testData = [
-  {input: [-5,-38,-33,-57], answer:"A", threshold: 0.2},
-  {input: [-40,-6,-50,-35], answer:"B", threshold: 0.2},
-  {input: [-18,-45,-1,-42], answer:"C", threshold: 0.2},
-  {input: [-53,-26,-36,-9], answer:"D", threshold: 0.2}
+  {input: [-5,-38,-33,-57], answer:"A", threshold: 0.25},
+  {input: [-40,-6,-53,-35], answer:"B", threshold: 0.25},
+  {input: [-18,-45,-1,-42], answer:"C", threshold: 0.25},
+  {input: [-53,-26,-36,-9], answer:"D", threshold: 0.25}
 ]
-// train(trainData, testData, converted);
-classify(testData, classifier);
+train(trainData, testData, converted);
+// classify(testData, classifier);

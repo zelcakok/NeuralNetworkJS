@@ -11,6 +11,7 @@ class Graph {
 
   static restore(obj){
     var graph = new Graph();
+    if(!obj) return graph;
     Object.keys(obj.layers).map((layer)=>{
       graph.layers[layer] = Matrix.restore(obj.layers[layer]);
     })
@@ -88,8 +89,9 @@ class Graph {
   train(iteration=1, verbose=false){
     var total = iteration;
     while(iteration-- > 0) {
-      console.log("Training, please wait...", Math.round(iteration / total) + "%");
+      if(!verbose) console.log("Training, please wait...", Math.round((total-iteration) / total * 100) + "%");
       this._train(iteration, verbose);
+      console.clear();
     }
   }
 
@@ -106,6 +108,10 @@ class Graph {
       var answer = new Matrix(1,1).fill(dataSet.answer);
       //Output errors ==> Target - Output
       var outputErrs = answer.optMinusMatrix(outputs)
+
+      //Try
+      // LEARNING_RATE *= 0.8;
+
       if(verbose) {
         console.log("Error");
         outputErrs.print();
@@ -175,7 +181,6 @@ class Graph {
   hiddenLayer(){
     var length = Object.keys(this.layers["Input"]).length * 2/3 +
                         Object.keys(this.layers["Output"]).length;
-    // var length = this.layers["Input"].size();
     var h = new Matrix(length, 1);
     for(var i=0; i<length; i++) h.add(Calc.randomWeight());
     this.layers["Hidden"] = h;

@@ -8,6 +8,7 @@ class Zetabase {
   }
 
   static restore(){
+    if(!fs.existsSync("./Graph.json")) return null;
     return new Promise((resolve, reject)=>{
       fs.readFile("./Graph.json", (err, json)=>{
         if(err) throw err;
