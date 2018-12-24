@@ -1,6 +1,7 @@
 const Matrix = require("./Matrix");
 const Graph = require("./Graph");
 const Zetabase = require("./Zetabase");
+const NeuralNetwork = require("./NeuralNetwork");
 
 function convert(inputs){
   var output = [];
@@ -87,4 +88,4 @@ var testData = [
   {input: [-53,-26,-36,-9], answer:"D", threshold: 0.25}
 ]
 train(trainData, testData, converted);
-// classify(testData, classifier);
+classify(testData, classifier);
